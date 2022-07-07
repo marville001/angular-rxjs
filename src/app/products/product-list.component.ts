@@ -22,7 +22,7 @@ export class ProductListComponent {
 
 
   products$ = combineLatest([
-    this.productService.productsWithCategory$,
+    this.productService.productsWithAdd$,
     this.categorySelectedAction$
       // .pipe( // When not using behavior subject
       //   startWith(0)
@@ -51,7 +51,7 @@ export class ProductListComponent {
   constructor(private productService: ProductService, private productCategoryService: ProductCategoryService) { }
 
   onAdd(): void {
-    console.log('Not yet implemented');
+    this.productService.addProduct();
   }
 
   onSelected(categoryId: string): void {
