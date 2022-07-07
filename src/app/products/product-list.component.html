@@ -12,7 +12,10 @@
             (change)="onSelected($any($event.target).value)"
           >
             <option value="0">- Display All -</option>
-            <option *ngFor="let category of categories$ | async " [value]="category.id">
+            <option
+              *ngFor="let category of categories$ | async"
+              [value]="category.id"
+            >
               {{ category.name }}
             </option>
           </select>
@@ -54,6 +57,6 @@
   </div>
 </div>
 
-<div class="alert alert-danger" *ngIf="errorMessage">
+<div class="alert alert-danger" *ngIf="errorMessage$ | async as errorMessage">
   {{ errorMessage }}
 </div>
