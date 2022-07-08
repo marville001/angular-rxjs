@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { throwError, Observable, of, map, concatMap, tap, mergeMap, switchMap } from 'rxjs';
+import { pipe, tap, Observable, shareReplay, throwError } from 'rxjs';
 import { Supplier } from './supplier';
 
 @Injectable({
@@ -10,40 +10,13 @@ import { Supplier } from './supplier';
 export class SupplierService {
   suppliersUrl = 'api/suppliers';
 
-  supplierWithMap$ = of(1, 5, 8)
-    .pipe(
-      map(id => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
-    )
+  suppliers$ = this.http.get<Supplier[]>(this.suppliersUrl)
+      .pipe(
+        tap(data => console.log('suppliers', JSON.stringify(data))),
+          shareReplay(1)
+      )
 
-  supplierWithConcatMap$ = of(1, 5, 8)
-    .pipe(
-      tap(id => console.log('concatMap source Observable', id)),
-      concatMap(id => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
-  )
-  
-  supplierWithMergeMap$ = of(1, 5, 8)
-    .pipe(
-      tap(id => console.log('mergeMap source Observable', id)),
-      mergeMap(id => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
-  )
-  
-  supplierWithSwitchMap$ = of(1, 5, 8)
-    .pipe(
-      tap(id => console.log('switchMap source Observable', id)),
-      switchMap(id => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
-    )
-
-  constructor(private http: HttpClient) {
-    // this.supplierWithConcatMap$.subscribe(item => console.log(`concatMap Result `, item))
-    // this.supplierWithMergeMap$.subscribe(item => console.log(`mergeMap Result `, item))
-    // this.supplierWithSwitchMap$.subscribe(item => console.log(`switchMap Result `, item))
-
-    // this.supplierWithMap$.subscribe(o => o.subscribe(
-    //   item => console.log(`map Result `, item)
-    // ))
-
-
-  }
+  constructor(private http: HttpClient) {}
 
   private handleError(err: HttpErrorResponse): Observable<never> {
     // in a real world app, we may send the server to some remote logging infrastructure
